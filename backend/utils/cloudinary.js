@@ -11,24 +11,20 @@ cloudinary.config({
 
 /* ===========================================================
    UPLOAD FILE TO CLOUDINARY
-   filePath = local path from multer (req.file.path)
-   folder   = cloudinary folder e.g. "services", "doctors", "profiles"
+   buffer = file buffer from multer (req.file.buffer)
+   folder = cloudinary folder e.g. "services", "doctors", "profiles"
    =========================================================== */
-export async function uploadToCloudinary(filePath, folder = "Doctor") {
-  try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder,
-      resource_type: "image",
-    });
-
-    // remove local file after upload
-    fs.unlinkSync(filePath);
-
-    return result;  // contains { secure_url, public_id, ... }
-  } catch (err) {
-    console.error("Cloudinary upload error:", err);
-    throw err;
-  }
+export async function uploadToCloudinary(buffer, folder = "Doctor") {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: "image" },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    uploadStream.end(buffer);
+  });
 }
 
 /* ===========================================================

@@ -69,9 +69,9 @@ export async function createService(req, res) {
 
     let imageUrl = null;
     let imagePublicId = null;
-    if (req.file) {
+    if (req.file?.buffer) {
       try {
-        const up = await uploadToCloudinary(req.file.path, "services");
+        const up = await uploadToCloudinary(req.file.buffer, "services");
         imageUrl = up?.secure_url || null;
         imagePublicId = up?.public_id || null;
       } catch (err) {
@@ -147,9 +147,9 @@ export async function updateService(req, res) {
     if (b.instructions !== undefined) updateData.instructions = parseJsonArrayField(b.instructions);
     if (b.slots !== undefined) updateData.slots = normalizeSlotsToMap(parseJsonArrayField(b.slots));
 
-    if (req.file) {
+    if (req.file?.buffer) {
       try {
-        const up = await uploadToCloudinary(req.file.path, "services");
+        const up = await uploadToCloudinary(req.file.buffer, "services");
         if (up?.secure_url) {
           updateData.imageUrl = up.secure_url;
           updateData.imagePublicId = up.public_id || null;
