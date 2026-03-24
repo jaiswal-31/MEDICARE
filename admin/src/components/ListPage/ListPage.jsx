@@ -417,7 +417,7 @@ export default function AnimatedDoctorListResponsive({ apiBase }) {
               <div
                 className={doctorListStyles.expandableContent}
                 style={{
-                  maxHeight: isOpen ? (isMobileScreen ? 320 : 600) : 0,
+                  maxHeight: isOpen ? (isMobileScreen ? 400 : 800) : 0,
                   transition:
                     "max-height 420ms cubic-bezier(.2,.9,.2,1), padding 220ms ease",
                   paddingTop: isOpen ? 16 : 0,
@@ -490,27 +490,31 @@ export default function AnimatedDoctorListResponsive({ apiBase }) {
                         {doc.location}
                       </div>
 
-                      {/* --- Password Change Section --- */}
-                      <div className="mt-6 pt-4 border-t border-emerald-100 w-full col-span-1 sm:col-span-2 md:col-span-3">
-                        <h4 className="text-md font-bold text-emerald-700 mb-2">Change Password</h4>
-                        <div className="flex flex-col sm:flex-row gap-2 max-w-md">
-                          <input
-                            type="password"
-                            placeholder="New Password"
-                            value={passwordForm.id === id ? passwordForm.password : ""}
-                            onChange={(e) => setPasswordForm({ id, password: e.target.value })}
-                            className="flex-1 px-4 py-2 rounded-full border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-200 text-sm"
-                          />
-                          <button
-                            onClick={() => updatePassword(id)}
-                            disabled={passwordLoading || passwordForm.id !== id || !passwordForm.password}
-                            className="px-6 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                          >
-                            {passwordLoading && passwordForm.id === id ? "Saving..." : "Save"}
-                          </button>
-                        </div>
-                      </div>
                     </aside>
+
+                    {/* --- Password Change Section (Moved to full-width row) --- */}
+                    <div className="mt-6 pt-4 border-t border-emerald-100 col-span-1 sm:col-span-2 md:col-span-3">
+                      <h4 className="text-md font-bold text-emerald-700 mb-2">Change Password</h4>
+                      <div className="flex flex-col sm:flex-row gap-3 max-w-md">
+                        <input
+                          type="password"
+                          placeholder="New Password"
+                          value={passwordForm.id === id ? passwordForm.password : ""}
+                          onChange={(e) => setPasswordForm({ id, password: e.target.value })}
+                          className="flex-1 px-4 py-2 rounded-full border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-200 text-sm bg-white"
+                        />
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updatePassword(id);
+                          }}
+                          disabled={passwordLoading || passwordForm.id !== id || !passwordForm.password}
+                          className="px-8 py-2 rounded-full bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md active:scale-95 whitespace-nowrap"
+                        >
+                          {passwordLoading && passwordForm.id === id ? "Saving..." : "Save Now"}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
