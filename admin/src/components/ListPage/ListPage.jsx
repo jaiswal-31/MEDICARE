@@ -107,6 +107,8 @@ export default function AnimatedDoctorListResponsive({ apiBase }) {
   const [showAll, setShowAll] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
   const [loading, setLoading] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ id: null, password: "" });
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   // track if we are on a mobile (tailwind "sm" breakpoint is 640px)
   const [isMobileScreen, setIsMobileScreen] = useState(false);
@@ -213,6 +215,33 @@ export default function AnimatedDoctorListResponsive({ apiBase }) {
     } catch (err) {
       console.error("delete error", err);
       alert("Network error deleting doctor");
+    }
+  }
+
+  async function updatePassword(id) {
+    if (!passwordForm.password) {
+      alert("Please enter a new password");
+      return;
+    }
+    setPasswordLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/doctors/${id}/password`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passwordForm.password }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        alert(body?.message || "Failed to update password");
+        return;
+      }
+      alert("Password updated successfully");
+      setPasswordForm({ id: null, password: "" });
+    } catch (err) {
+      console.error("updatePassword error", err);
+      alert("Network error updating password");
+    } finally {
+      setPasswordLoading(false);
     }
   }
 
@@ -459,6 +488,27 @@ export default function AnimatedDoctorListResponsive({ apiBase }) {
                       </div>
                       <div className={doctorListStyles.locationValue}>
                         {doc.location}
+                      </div>
+
+                      {/* --- Password Change Section --- */}
+                      <div className="mt-6 pt-4 border-t border-emerald-100 w-full col-span-1 sm:col-span-2 md:col-span-3">
+                        <h4 className="text-md font-bold text-emerald-700 mb-2">Change Password</h4>
+                        <div className="flex flex-col sm:flex-row gap-2 max-w-md">
+                          <input
+                            type="password"
+                            placeholder="New Password"
+                            value={passwordForm.id === id ? passwordForm.password : ""}
+                            onChange={(e) => setPasswordForm({ id, password: e.target.value })}
+                            className="flex-1 px-4 py-2 rounded-full border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-200 text-sm"
+                          />
+                          <button
+                            onClick={() => updatePassword(id)}
+                            disabled={passwordLoading || passwordForm.id !== id || !passwordForm.password}
+                            className="px-6 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          >
+                            {passwordLoading && passwordForm.id === id ? "Saving..." : "Save"}
+                          </button>
+                        </div>
                       </div>
                     </aside>
                   </div>

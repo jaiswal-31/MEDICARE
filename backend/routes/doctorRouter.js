@@ -10,6 +10,7 @@ import {
   deleteDoctor,
   toggleAvailability,
   doctorLogin,
+  updateDoctorPasswordByAdmin,
 } from "../controllers/doctorController.js";
 
 import doctorAuth from "../middlewares/doctorAuth.js";
@@ -36,6 +37,7 @@ doctorRouter.post(
   doctorAuth,
   toggleAvailability
 );
+doctorRouter.patch("/:id/password", updateDoctorPasswordByAdmin);
 doctorRouter.delete("/:id", deleteDoctor);
 
 export default doctorRouter;

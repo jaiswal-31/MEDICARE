@@ -11,7 +11,6 @@ const doctorSchema = new mongoose.Schema(
       index: true,
     },
 
-    // ⚠️ Plain text password (NOT hashed)
     password: {
       type: String,
       required: true,
@@ -44,22 +43,22 @@ const doctorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔒 Hash password before saving
-doctorSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+// Hash password before saving
+doctorSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
   } catch (err) {
-    next(err);
+    throw err;
   }
 });
 
-// 🔒 Compare password method
+// Compare password method
 doctorSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
 
 // text search
 doctorSchema.index({ name: "text", specialization: "text" });

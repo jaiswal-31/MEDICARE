@@ -74,7 +74,7 @@ app.use(compression());
 // Apply rate limiting to all requests (except maybe internal ones)
 app.use("/api/", limiter);
 
-// ⭐ Use Clerk middleware globally (does NOT protect routes)
+// Use Clerk middleware globally (does NOT protect routes)
 app.use(clerkMiddleware());
 
 
@@ -85,10 +85,9 @@ app.use(express.urlencoded({ limit: "20mb", extended: true }));
 // Database Connection
 connectDB();
 
-// Static uploads folder
 
 
-// Routes (unchanged)
+// Routes
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/services", serviceRouter);
@@ -97,15 +96,11 @@ app.use("/api/service-appointments", serviceAppointmentRouter);
 // Test route
 app.get('/', (req, res) => {
     res.json({
-        message: 'API Working',
-        env: {
-            CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY ? process.env.CLERK_PUBLISHABLE_KEY.substring(0, 8) + "..." : "MISSING",
-            CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY ? process.env.CLERK_SECRET_KEY.substring(0, 8) + "..." : "MISSING",
-            DATABASE_URL: process.env.DATABASE_URL ? "SET" : "MISSING (using fallback)",
-            FRONTEND_URL: process.env.FRONTEND_URL || "NOT SET",
-        }
+        success: true,
+        message: 'API Working'
     });
 });
+
 
 // Error Handler
 app.use((err, req, res, next) => {

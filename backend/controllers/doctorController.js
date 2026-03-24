@@ -340,3 +340,25 @@ export async function doctorLogin(req, res) {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 }
+
+export async function updateDoctorPasswordByAdmin(req, res) {
+  try {
+    const { id } = req.params;
+    const { password } = req.body || {};
+
+    if (!password) {
+      return res.status(400).json({ success: false, message: "New password is required" });
+    }
+
+    const doc = await Doctor.findById(id);
+    if (!doc) return res.status(404).json({ success: false, message: "Doctor not found" });
+
+    doc.password = password;
+    await doc.save();
+
+    return res.json({ success: true, message: "Password updated successfully" });
+  } catch (err) {
+    console.error("updateDoctorPasswordByAdmin error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
